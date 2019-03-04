@@ -25,15 +25,24 @@ async function getParkStatsBy(park){
       var geo = row[1].innerText.trim();
       var wait = parseInt(row[2].innerText.replace(/\D+/g, ''));
 	  var csvoutput = [park,ride,geo,wait,timestamp];
+	  parkTableCSV.push(csvoutput);
+
 	  var jsonoutput = {
 		"park":park,
 		"ride":ride,
 		"geo":geo,
-		"wait":wait,
-		"timestamp":timestamp,
+		"wait":[[wait,timestamp]],
 		};
-	  parkTableCSV.push(csvoutput);
-	  parkTableJSON.push(jsonoutput);
+	  var rideExists = parkTableJSON.some(itm=> itm.ride == jsonoutput.ride);
+	  	if(rideExists){
+		  for(var j=0; j<parkTableJSON.length; j++){
+			if(parkTableJSON[j].ride == jsonoutput.ride){
+				parkTableJSON[j].wait.push([wait,timestamp]);
+          	}
+      	  }
+	  	}else{
+			parkTableJSON.push(jsonoutput);
+		}
     }
   }
 }
